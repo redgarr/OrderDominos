@@ -36,7 +36,7 @@ public class OrderDominosServlet
 
 	//boolean to decide if an order should be actually placed or not
 	//if set to false the final "order" button wont be pressed.
-	private boolean makeRealOrder = true;
+	private boolean makeRealOrder = false;
 
 	@RequestMapping(value = "/OrderRandom", method = RequestMethod.POST)
 	public void orderRandom()
@@ -55,10 +55,10 @@ public class OrderDominosServlet
 					e.printStackTrace();
 				}
 			}
-			System.setProperty("webdriver.gecko.driver", "/XX/XX/geckodriver");
+			System.setProperty("webdriver.gecko.driver", "/home/pi/geckodriver");
 
 			FirefoxProfile profile = new FirefoxProfile();
-			profile.addExtension(new File("/XX/XX/mkiosk.xpi"));
+			profile.addExtension(new File("/home/pi/mkiosk.xpi"));
 
 			DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 			capabilities.setCapability("marionette", false);
@@ -84,10 +84,10 @@ public class OrderDominosServlet
 			WebElement emailField = new WebDriverWait(driver, 10)
 				.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-email")));
 
-			emailField.sendKeys("XXXX@XXXX.XXX");
+			emailField.sendKeys("xx@xx.se");
 
 			driver.findElement(By.id("login-pass"))
-				.sendKeys("XXXX");
+				.sendKeys("xx");
 
 			driver.findElement(By.className("login"))
 				.click();
@@ -141,6 +141,12 @@ public class OrderDominosServlet
 			WebElement ccNumber = new WebDriverWait(driver, 10)
 				.until(ExpectedConditions.elementToBeClickable(By.id("cc-number")));
 
+			//Set opacity of payment fields to 0 to keep them from showing on the screen
+			((JavascriptExecutor)driver).executeScript("document.getElementById(\"cc-cvc\").style.opacity = \"0\";\n");
+			((JavascriptExecutor)driver).executeScript("document.getElementById(\"cc-number\").style.opacity = \"0\";\n");
+			((JavascriptExecutor)driver).executeScript("document.getElementById(\"cc-exp\").style.opacity = \"0\";\n");
+			((JavascriptExecutor)driver).executeScript("document.getElementById(\"holder_name\").style.opacity = \"0\";\n");
+
 			//We have to add a delay between each tuple here because there is some
 			//operation on the website that will block inputs for a short duration
 			ccNumber.sendKeys("XXXX");
@@ -162,12 +168,13 @@ public class OrderDominosServlet
 				.sendKeys("XXX");
 
 			driver.findElement(By.id("holder_name"))
-				.sendKeys("XXXX XXXX");
+				.sendKeys("XXX XXX");
 
 			if(makeRealOrder)
 			{
 				driver.findElement(By.className("new-credit-card-submit"))
 					.click();
+
 			}
 
 			new WebDriverWait(driver, 60)
